@@ -1,0 +1,1 @@
+console.log("Brawlhalla API JS Library")
