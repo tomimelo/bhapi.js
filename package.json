@@ -8,6 +8,8 @@
     "lib/**/*"
   ],
   "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix",
