@@ -1,4 +1,4 @@
-import { BrawlhallaAPIConfig, Player, Ranking, RankingsOptions, SteamId64 } from './types'
+import { BrawlhallaAPIConfig, Player, PlayerRankedData, PlayerStats, Ranking, RankingsOptions, SteamId64 } from './types'
 import axios, { AxiosInstance } from 'axios'
 import { RANKINGS_OPTIONS } from './constants'
 
@@ -23,6 +23,16 @@ export class BrawlhallaAPI {
         name,
       },
     })
+    return data
+  }
+
+  public async getPlayerStats(brawlhallaId: string): Promise<PlayerStats> {
+    const { data } = await this.api.get<PlayerStats>(`/player/${brawlhallaId}/stats`)
+    return data
+  }
+
+  public async getPlayerRankedData(brawlhallaId: string): Promise<PlayerRankedData> {
+    const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
     return data
   }
 }
