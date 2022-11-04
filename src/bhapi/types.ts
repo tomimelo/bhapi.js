@@ -162,3 +162,7 @@ export interface Clan {
   clan_xp: string
   clan: ReadonlyArray<ClanMember>
 }
+
+export interface Weapon {
+  name: string
+}
