@@ -1,4 +1,16 @@
-import { BrawlhallaAPIConfig, Player, PlayerRankedData, PlayerStats, Ranking, RankingsOptions, SteamId64 } from './types'
+import {
+  BrawlhallaAPIConfig,
+  Clan,
+  Legend,
+  LegendData,
+  Player,
+  PlayerRankedData,
+  PlayerStats,
+  Ranking,
+  RankingsOptions,
+  SteamId64,
+  Weapon,
+} from './types'
 import axios, { AxiosInstance } from 'axios'
 import { RANKINGS_OPTIONS } from './constants'
 
@@ -34,5 +46,30 @@ export class BrawlhallaAPI {
   public async getPlayerRankedData(brawlhallaId: string): Promise<PlayerRankedData> {
     const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
     return data
+  }
+
+  public async getClan(clanId: string): Promise<Clan> {
+    const { data } = await this.api.get<Clan>(`/clan/${clanId}`)
+    return data
+  }
+
+  public async getLegends(): Promise<ReadonlyArray<LegendData>> {
+    const { data } = await this.api.get<ReadonlyArray<LegendData>>(`/legend/all`)
+    return data
+  }
+
+  public async getLegend(legendId: string): Promise<Legend> {
+    const { data } = await this.api.get<Legend>(`/legend/${legendId}`)
+    return data
+  }
+
+  public async getWeapons(): Promise<ReadonlyArray<Weapon>> {
+    const legendsData = await this.getLegends()
+
+    const weaponsSet = legendsData.reduce<Set<string>>(
+      (set, legend) => set.add(legend.weapon_one).add(legend.weapon_two),
+      new Set(),
+    )
+    return Array.from(weaponsSet).map((name) => ({ name }))
   }
 }
