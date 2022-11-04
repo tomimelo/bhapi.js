@@ -5,6 +5,7 @@ export interface BrawlhallaAPIConfig {
 export type SteamId64 = string
 
 export type Bracket = '1v1' | '2v2'
+
 export type Region = 'us-e' | 'us-w' | 'eu' | 'sea' | 'brz' | 'aus' | 'all'
 
 export interface Player {
@@ -12,7 +13,7 @@ export interface Player {
   name: string
 }
 
-interface PlayerClanInfo {
+export interface PlayerClanInfo {
   clan_name: string
   clan_id: number
   clan_xp: string
@@ -47,6 +48,7 @@ export interface LegendStats {
   level: number
   xp_percentage: number
 }
+
 export interface PlayerStats extends Player {
   xp: number
   level: number
@@ -89,7 +91,7 @@ export interface Legend extends LegendData {
   bot_name: string
 }
 
-interface LegendRankedData {
+export interface LegendRankedData {
   legend_id: 4
   legend_name_key: string
   rating: number
