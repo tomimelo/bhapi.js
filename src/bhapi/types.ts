@@ -4,6 +4,21 @@ export interface BrawlhallaAPIConfig {
 
 export type SteamId64 = string
 
+export type Bracket = '1v1' | '2v2'
+export type Region = 'us-e' | 'us-w' | 'eu' | 'sea' | 'brz' | 'aus' | 'all'
+
+export interface Player {
+  brawlhalla_id: number
+  name: string
+}
+
+interface PlayerClanInfo {
+  clan_name: string
+  clan_id: number
+  clan_xp: string
+  personal_xp: number
+}
+
 export interface LegendStats {
   legend_id: number
   legend_name_key: string
@@ -32,6 +47,25 @@ export interface LegendStats {
   level: number
   xp_percentage: number
 }
+export interface PlayerStats extends Player {
+  xp: number
+  level: number
+  xp_percentage: number
+  games: number
+  wins: number
+  damagebomb: string
+  damagemine: string
+  damagespikeball: string
+  damagesidekick: string
+  hitsnowball: number
+  kobomb: number
+  komine: number
+  kospikeball: number
+  kosidekick: number
+  kosnowball: number
+  legends: ReadonlyArray<LegendStats>
+  clan: PlayerClanInfo
+}
 
 export interface LegendData {
   legend_id: number
@@ -53,38 +87,6 @@ export interface Legend extends LegendData {
   bio_quote_from_attrib: string
   bio_text: string
   bot_name: string
-}
-
-export interface Player {
-  brawlhalla_id: number
-  name: string
-}
-
-interface PlayerClanInfo {
-  clan_name: string
-  clan_id: number
-  clan_xp: string
-  personal_xp: number
-}
-
-export interface PlayerStats extends Player {
-  xp: number
-  level: number
-  xp_percentage: number
-  games: number
-  wins: number
-  damagebomb: string
-  damagemine: string
-  damagespikeball: string
-  damagesidekick: string
-  hitsnowball: number
-  kobomb: number
-  komine: number
-  kospikeball: number
-  kosidekick: number
-  kosnowball: number
-  legends: ReadonlyArray<LegendStats>
-  clan: PlayerClanInfo
 }
 
 interface LegendRankedData {
@@ -122,9 +124,6 @@ export interface PlayerRankedData extends Player {
   legends: ReadonlyArray<LegendRankedData>
   '2v2': ReadonlyArray<RankedTeam>
 }
-
-export type Bracket = '1v1' | '2v2'
-export type Region = 'us-e' | 'us-w' | 'eu' | 'sea' | 'brz' | 'aus' | 'all'
 
 export interface RankingsOptions {
   bracket: Bracket
