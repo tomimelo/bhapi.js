@@ -17,6 +17,7 @@ import { RANKINGS_OPTIONS } from './constants'
 export class BrawlhallaAPI {
   private api: AxiosInstance
   public constructor(private readonly config: BrawlhallaAPIConfig) {
+    this.validateConfig()
     this.api = axios.create({ baseURL: 'https://api.brawlhalla.com', params: { api_key: this.config.apiKey } })
   }
 
@@ -71,5 +72,16 @@ export class BrawlhallaAPI {
       new Set(),
     )
     return Array.from(weaponsSet).map((name) => ({ name }))
+  }
+
+  private validateConfig(): void {
+    if (this.config === undefined || this.config.apiKey === undefined) {
+      throw new Error(
+        'A Brawlhalla API key is required in the config. If you do not have an API key, please read: https://dev.brawlhalla.com/#authentication',
+      )
+    }
+    if (typeof this.config.apiKey !== 'string') {
+      throw new Error('The API key is invalid. Please provide a valid one')
+    }
   }
 }
