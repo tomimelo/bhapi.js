@@ -12,7 +12,7 @@ import {
   SteamId64,
   Weapon,
 } from './types'
-import { AxiosError, AxiosInstance } from 'axios'
+import { AxiosInstance } from 'axios'
 import { RANKINGS_OPTIONS } from './constants'
 import { apiClient } from '../api/client'
 
@@ -33,6 +33,11 @@ export class BrawlhallaAPI {
           steamid: steamId,
         },
       })
+
+      if (Array.isArray(data) || !data || !data.brawlhalla_id) {
+        throw new Error('Player not found')
+      }
+
       return data
     } catch (error) {
       this.handleError(error)
@@ -46,6 +51,7 @@ export class BrawlhallaAPI {
           name,
         },
       })
+
       return data
     } catch (error) {
       this.handleError(error)
@@ -55,6 +61,11 @@ export class BrawlhallaAPI {
   public async getPlayerStats(brawlhallaId: number): Promise<PlayerStats> {
     try {
       const { data } = await this.api.get<PlayerStats>(`/player/${brawlhallaId}/stats`)
+
+      if ((typeof data === 'object' && Object.keys(data).length === 0) || !data || !Array.isArray(data)) {
+        throw new Error('Player not found')
+      }
+
       return data
     } catch (error) {
       this.handleError(error)
@@ -64,6 +75,11 @@ export class BrawlhallaAPI {
   public async getPlayerRankedData(brawlhallaId: number): Promise<PlayerRankedData> {
     try {
       const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
+
+      if ((typeof data === 'object' && Object.keys(data).length === 0) || !data || !Array.isArray(data)) {
+        throw new Error('Player not found')
+      }
+
       return data
     } catch (error) {
       this.handleError(error)
@@ -73,6 +89,11 @@ export class BrawlhallaAPI {
   public async getClan(clanId: number): Promise<Clan> {
     try {
       const { data } = await this.api.get<Clan>(`/clan/${clanId}`)
+
+      if ((typeof data === 'object' && Object.keys(data).length === 0) || !data || !Array.isArray(data)) {
+        throw new Error('Clan not found')
+      }
+
       return data
     } catch (error) {
       this.handleError(error)
@@ -122,11 +143,7 @@ export class BrawlhallaAPI {
     }
   }
 
-  private handleError(err: any): never {
-    this.handleAxiosError(err)
-  }
-
-  private handleAxiosError(error: AxiosError<BrawlhallaBadResponse>): never {
+  private handleError(error: any): never {
     if (error.response) {
       this.handleBrawlhallaError(error.response.data)
     }
@@ -134,6 +151,6 @@ export class BrawlhallaAPI {
   }
 
   private handleBrawlhallaError(error: BrawlhallaBadResponse): never {
-    throw error.error
+    throw new Error(error.error.message)
   }
 }
