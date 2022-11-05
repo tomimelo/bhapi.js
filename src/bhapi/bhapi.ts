@@ -1,5 +1,6 @@
 import {
   BrawlhallaAPIConfig,
+  BrawlhallaBadResponse,
   Clan,
   Legend,
   LegendData,
@@ -11,7 +12,7 @@ import {
   SteamId64,
   Weapon,
 } from './types'
-import { AxiosInstance } from 'axios'
+import { AxiosError, AxiosInstance } from 'axios'
 import { RANKINGS_OPTIONS } from './constants'
 import { apiClient } from '../api/client'
 
@@ -26,60 +27,92 @@ export class BrawlhallaAPI {
   }
 
   public async searchBySteamID(steamId: SteamId64): Promise<Player> {
-    const { data } = await this.api.get<Player>('/search', {
-      params: {
-        steamid: steamId,
-      },
-    })
-    return data
+    try {
+      const { data } = await this.api.get<Player>('/search', {
+        params: {
+          steamid: steamId,
+        },
+      })
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getRankings({ bracket, region, page, name }: RankingsOptions = RANKINGS_OPTIONS): Promise<ReadonlyArray<Ranking>> {
-    const { data } = await this.api.get<ReadonlyArray<Ranking>>(`/rankings/${bracket}/${region}/${page}`, {
-      params: {
-        name,
-      },
-    })
-    return data
+    try {
+      const { data } = await this.api.get<ReadonlyArray<Ranking>>(`/rankings/${bracket}/${region}/${page}`, {
+        params: {
+          name,
+        },
+      })
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getPlayerStats(brawlhallaId: number): Promise<PlayerStats> {
-    const { data } = await this.api.get<PlayerStats>(`/player/${brawlhallaId}/stats`)
-    return data
+    try {
+      const { data } = await this.api.get<PlayerStats>(`/player/${brawlhallaId}/stats`)
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getPlayerRankedData(brawlhallaId: number): Promise<PlayerRankedData> {
-    const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
-    return data
+    try {
+      const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getClan(clanId: number): Promise<Clan> {
-    const { data } = await this.api.get<Clan>(`/clan/${clanId}`)
-    return data
+    try {
+      const { data } = await this.api.get<Clan>(`/clan/${clanId}`)
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getLegends(): Promise<ReadonlyArray<LegendData>> {
-    const { data } = await this.api.get<ReadonlyArray<LegendData>>(`/legend/all`)
-    return data
+    try {
+      const { data } = await this.api.get<ReadonlyArray<LegendData>>(`/legend/all`)
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getLegend(legendId: number): Promise<Legend> {
-    const { data } = await this.api.get<Legend>(`/legend/${legendId}`)
-    return data
+    try {
+      const { data } = await this.api.get<Legend>(`/legend/${legendId}`)
+      return data
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   public async getWeapons(): Promise<ReadonlyArray<Weapon>> {
-    const legendsData = await this.getLegends()
+    try {
+      const legendsData = await this.getLegends()
 
-    const weaponsSet = legendsData.reduce<Set<string>>(
-      (set, legend) => set.add(legend.weapon_one).add(legend.weapon_two),
-      new Set(),
-    )
-    return Array.from(weaponsSet).map((name) => ({ name }))
+      const weaponsSet = legendsData.reduce<Set<string>>(
+        (set, legend) => set.add(legend.weapon_one).add(legend.weapon_two),
+        new Set(),
+      )
+      return Array.from(weaponsSet).map((name) => ({ name }))
+    } catch (error) {
+      this.handleError(error)
+    }
   }
 
   private validateConfig(): void {
-    if (this.config === undefined || this.config.apiKey === undefined) {
+    if (this.config === undefined || !this.config.apiKey) {
       throw new Error(
         'A Brawlhalla API key is required in the config. If you do not have an API key, please read: https://dev.brawlhalla.com/#authentication',
       )
@@ -87,5 +120,20 @@ export class BrawlhallaAPI {
     if (typeof this.config.apiKey !== 'string') {
       throw new Error('The API key is invalid. Please provide a valid one')
     }
+  }
+
+  private handleError(err: any): never {
+    this.handleAxiosError(err)
+  }
+
+  private handleAxiosError(error: AxiosError<BrawlhallaBadResponse>): never {
+    if (error.response) {
+      this.handleBrawlhallaError(error.response.data)
+    }
+    throw error
+  }
+
+  private handleBrawlhallaError(error: BrawlhallaBadResponse): never {
+    throw error.error
   }
 }
