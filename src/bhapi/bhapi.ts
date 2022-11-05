@@ -11,14 +11,18 @@ import {
   SteamId64,
   Weapon,
 } from './types'
-import axios, { AxiosInstance } from 'axios'
+import { AxiosInstance } from 'axios'
 import { RANKINGS_OPTIONS } from './constants'
+import { apiClient } from '../api/client'
 
 export class BrawlhallaAPI {
   private api: AxiosInstance
   public constructor(private readonly config: BrawlhallaAPIConfig) {
     this.validateConfig()
-    this.api = axios.create({ baseURL: 'https://api.brawlhalla.com', params: { api_key: this.config.apiKey } })
+    this.api = apiClient
+    this.api.defaults.params = {
+      api_key: this.config.apiKey,
+    }
   }
 
   public async searchBySteamID(steamId: SteamId64): Promise<Player> {
@@ -39,17 +43,17 @@ export class BrawlhallaAPI {
     return data
   }
 
-  public async getPlayerStats(brawlhallaId: string): Promise<PlayerStats> {
+  public async getPlayerStats(brawlhallaId: number): Promise<PlayerStats> {
     const { data } = await this.api.get<PlayerStats>(`/player/${brawlhallaId}/stats`)
     return data
   }
 
-  public async getPlayerRankedData(brawlhallaId: string): Promise<PlayerRankedData> {
+  public async getPlayerRankedData(brawlhallaId: number): Promise<PlayerRankedData> {
     const { data } = await this.api.get<PlayerRankedData>(`/player/${brawlhallaId}/ranked`)
     return data
   }
 
-  public async getClan(clanId: string): Promise<Clan> {
+  public async getClan(clanId: number): Promise<Clan> {
     const { data } = await this.api.get<Clan>(`/clan/${clanId}`)
     return data
   }
@@ -59,7 +63,7 @@ export class BrawlhallaAPI {
     return data
   }
 
-  public async getLegend(legendId: string): Promise<Legend> {
+  public async getLegend(legendId: number): Promise<Legend> {
     const { data } = await this.api.get<Legend>(`/legend/${legendId}`)
     return data
   }
