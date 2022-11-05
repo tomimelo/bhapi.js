@@ -167,3 +167,10 @@ export interface Clan {
 export interface Weapon {
   name: string
 }
+
+export interface BrawlhallaBadResponse {
+  error: {
+    code: number
+    message: string
+  }
+}
