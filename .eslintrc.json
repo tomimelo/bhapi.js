@@ -1,7 +1,8 @@
 {
   "env": {
     "es2021": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "extends": ["standard", "prettier"],
   "parser": "@typescript-eslint/parser",
@@ -9,7 +10,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "mocha"],
   "rules": {
     "no-unused-vars": "off",
     "no-useless-constructor": 0,
@@ -25,6 +26,7 @@
     "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/explicit-member-accessibility": "error",
     "@typescript-eslint/member-ordering": "error",
+    "mocha/no-exclusive-tests": "error",
     "max-len": [
       "error",
       {
